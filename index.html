@@ -23,6 +23,7 @@
       width: 200px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 15px;
+      position: relative;
     }
     .book-card h3 {
       font-size: 1.2em;
@@ -31,43 +32,133 @@
     .book-card p {
       margin: 5px 0;
     }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .remove-btn {
+      background-color: #dc3545;
+    }
+    .remove-btn:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
 <body>
+  <h1>Book Library</h1>
+  <button id="newBookBtn">New Book</button>
   <div id="bookContainer" class="book-container"></div>
 
+  <dialog id="bookDialog">
+    <form id="bookForm">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required>
+      
+      <label for="author">Author:</label>
+      <input type="text" id="author" name="author" required>
+      
+      <label for="pages">Number of Pages:</label>
+      <input type="number" id="pages" name="pages" required>
+      
+      <label for="read">Read:</label>
+      <select id="read" name="read">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      
+      <button type="submit">Add Book</button>
+    </form>
+  </dialog>
+
   <script>
-    // Sample books array
+    class Book {
+      constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+      }
+
+      toggleReadStatus() {
+        this.read = this.read === 'Yes' ? 'No' : 'Yes';
+      }
+    }
+
     const books = [
-      { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', year: 1925 },
-      { title: 'To Kill a Mockingbird', author: 'Harper Lee', year: 1960 },
-      { title: '1984', author: 'George Orwell', year: 1949 },
-      { title: 'Moby-Dick', author: 'Herman Melville', year: 1851 }
+      new Book('The Great Gatsby', 'F. Scott Fitzgerald', 180, 'Yes'),
+      new Book('To Kill a Mockingbird', 'Harper Lee', 281, 'No'),
     ];
 
-    // Function to display books
     function displayBooks(books) {
       const container = document.getElementById('bookContainer');
-      container.innerHTML = ''; // Clear any existing content
+      container.innerHTML = '';
 
-      books.forEach(book => {
-        // Create a new card for each book
+      books.forEach((book, index) => {
         const card = document.createElement('div');
         card.className = 'book-card';
+        card.setAttribute('data-index', index);
 
-        // Add book details
         card.innerHTML = `
           <h3>${book.title}</h3>
           <p><strong>Author:</strong> ${book.author}</p>
-          <p><strong>Year:</strong> ${book.year}</p>
+          <p><strong>Pages:</strong> ${book.pages}</p>
+          <p><strong>Read:</strong> ${book.read}</p>
+          <button class="toggle-read-btn">Toggle Read Status</button>
+          <button class="remove-btn">Remove</button>
         `;
 
-        // Append the card to the container
         container.appendChild(card);
+      });
+
+      attachEventListeners();
+    }
+
+    function attachEventListeners() {
+      document.querySelectorAll('.toggle-read-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.parentElement.getAttribute('data-index');
+          books[index].toggleReadStatus();
+          displayBooks(books);
+        });
+      });
+
+      document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.parentElement.getAttribute('data-index');
+          books.splice(index, 1);
+          displayBooks(books);
+        });
       });
     }
 
-    // Initial display of books
+    document.getElementById('newBookBtn').addEventListener('click', () => {
+      document.getElementById('bookDialog').showModal();
+    });
+
+    document.getElementById('bookForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const pages = document.getElementById('pages').value;
+      const read = document.getElementById('read').value;
+
+      books.push(new Book(title, author, pages, read));
+      displayBooks(books);
+
+      this.reset(); // Reset form fields
+      document.getElementById('bookDialog').close();
+    });
+
+    
     displayBooks(books);
   </script>
 </body>
