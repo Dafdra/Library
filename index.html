@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .book-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .book-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      width: 200px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+    }
+    .book-card h3 {
+      font-size: 1.2em;
+      margin: 0 0 10px;
+    }
+    .book-card p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="bookContainer" class="book-container"></div>
+
+  <script>
+    // Sample books array
+    const books = [
+      { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', year: 1925 },
+      { title: 'To Kill a Mockingbird', author: 'Harper Lee', year: 1960 },
+      { title: '1984', author: 'George Orwell', year: 1949 },
+      { title: 'Moby-Dick', author: 'Herman Melville', year: 1851 }
+    ];
+
+    // Function to display books
+    function displayBooks(books) {
+      const container = document.getElementById('bookContainer');
+      container.innerHTML = ''; // Clear any existing content
+
+      books.forEach(book => {
+        // Create a new card for each book
+        const card = document.createElement('div');
+        card.className = 'book-card';
+
+        // Add book details
+        card.innerHTML = `
+          <h3>${book.title}</h3>
+          <p><strong>Author:</strong> ${book.author}</p>
+          <p><strong>Year:</strong> ${book.year}</p>
+        `;
+
+        // Append the card to the container
+        container.appendChild(card);
+      });
+    }
+
+    // Initial display of books
+    displayBooks(books);
+  </script>
+</body>
+</html>
